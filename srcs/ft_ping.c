@@ -29,25 +29,27 @@ static char *get_str_addr(t_ping_data *data)
     struct addrinfo     hints;
     struct addrinfo     *result;
     struct sockaddr_in  *addr_in;
+    struct sockaddr_in6 *addr_in6;
     char                *str_addr;
-    int                 ret;
+    int                 ret;            // !!! pass this as parameter to satisfty normipute
 
     str_addr = NULL;
     set_addr_info_struct(&hints);
-    ret = getaddrinfo(data->target, NULL, &hints, &result);
-    if (ret != 0)
+    if ((ret = getaddrinfo(data->target, NULL, &hints, &result)) != 0)
         fprintf(stderr, "ft_ping: %s: %s\n", data->target, gai_strerror(ret));
     else if (result->ai_addr->sa_family == AF_INET) 
-    { 
+    {
         addr_in = (struct sockaddr_in *)result->ai_addr;
         str_addr = (char *)malloc(INET_ADDRSTRLEN);
         inet_ntop(AF_INET, &(addr_in->sin_addr), str_addr, INET_ADDRSTRLEN);
-    } /*else if (result->ai_addr->sa_family == AF_INET6)
+    } 
+    else if (result->ai_addr->sa_family == AF_INET6)
     {
-        addr_in = (struct sockaddr_in6 *)result->ai_addr;
+        addr_in6 = (struct sockaddr_in6 *)result->ai_addr;
         str_addr = (char *)malloc(INET6_ADDRSTRLEN);
-        inet_ntop(AF_INET6, &(addr_in->sin6_addr), str_addr, INET6_ADDRSTRLEN);
-    }*/
+        inet_ntop(AF_INET6, &(addr_in6->sin6_addr), str_addr, INET6_ADDRSTRLEN);
+    }
+    freeaddrinfo(result);
     return(str_addr);
 }
 
@@ -58,5 +60,6 @@ int ft_ping(t_ping_data *data)
     if ((str_addr = get_str_addr(data)) == NULL)
         return(2);
     printf("FT_PING %s (%s)\n", data->target, str_addr);
+    free(str_addr);
     return(0);
 }
