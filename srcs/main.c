@@ -19,44 +19,46 @@ static void print_usage()
 
 static void clean_data(t_ping_data *data)
 {
-    free(data->target);
+    if (data && data->target)
+        free(data->target);
     free(data);
 }
 
-static t_ping_data *get_inputs(int ac, char **av, t_ping_data *data)
+static int get_inputs(int ac, char **av, t_ping_data *data)
 {
     int         i;
 
-    i = 1;
-    while (i < ac)
-    {
+    i = 0;
+    while (++i < ac)
         if (av[i] && ft_strlen(av[i]))
         {
             if (ft_strcmp(av[i], "-h") == 0)
             {
                 print_usage();
-                return(NULL);
+                return(-1);
             } 
             else if (ft_strcmp(av[i], "-v") == 0)
-            {
                 data->verbose = 1;
-            } 
             else
             {
-                if ((data->target = (char *)malloc(ft_strlen(av[i] + 1))) == NULL)
-                    return(NULL);
+                if ((data->target = (char *)malloc(ft_strlen(av[i]) + 1)) == NULL)
+                    return(-1);
                 ft_strcpy(data->target, av[i]);
             }
         }
-        ++i;
+    if (data->target == NULL)
+    {
+        print_usage();
+        return(-1);
     }
-    return(data);
+    return(0);
 }
 
 static t_ping_data *check_inputs(int ac, char **av)
 {
     t_ping_data *data;
 
+    data = NULL;
     if (ac <= 1)
     {
         print_usage();
@@ -66,7 +68,7 @@ static t_ping_data *check_inputs(int ac, char **av)
         return(NULL);
     data->verbose = 0;
     data->target = NULL;
-    data = get_inputs(ac, av, data);
+    get_inputs(ac, av, data);
     return(data);
 }
 
@@ -74,7 +76,8 @@ int main(int ac, char **av)
 {
     t_ping_data *data;
 
-    if ((data = check_inputs(ac, av)) == NULL)
+    data = check_inputs(ac, av);
+    if (data == NULL || data->target == NULL)
     {
         clean_data(data);
         return(-1);
