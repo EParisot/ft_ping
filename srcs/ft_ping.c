@@ -59,7 +59,12 @@ int ft_ping(t_ping_data *data)
 
     if ((str_addr = get_str_addr(data)) == NULL)
         return(2);
+    // TODO Build ICMP package
     printf("FT_PING %s (%s)\n", data->target, str_addr);
+    // TODO open socket
+    // TODO send ICMP package
+    // ...
+    // TODO close socket
     free(str_addr);
     return(0);
 }
