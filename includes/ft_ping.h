@@ -17,6 +17,10 @@
 # include <stdlib.h>
 # include <stdio.h>
 # include "../libft/libft.h"
+# include <arpa/inet.h>
+# include <sys/types.h>
+# include <sys/socket.h>
+# include <netdb.h>
 
 typedef struct		s_ping_data
 {
@@ -24,6 +28,6 @@ typedef struct		s_ping_data
     char            *target;
 }					t_ping_data;
 
-void ft_ping(t_ping_data *data);
+int ft_ping(t_ping_data *data);
 
 # endif

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_ping.c                                          :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eparisot <eparisot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -74,6 +74,7 @@ static t_ping_data *check_inputs(int ac, char **av)
 
 int main(int ac, char **av)
 {
+    int         ret;
     t_ping_data *data;
 
     data = check_inputs(ac, av);
@@ -82,7 +83,7 @@ int main(int ac, char **av)
         clean_data(data);
         return(-1);
     }
-    ft_ping(data);
+    ret = ft_ping(data);
     clean_data(data);
-    return(0);
+    return(ret);
 }
