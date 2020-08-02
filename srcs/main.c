@@ -21,6 +21,8 @@ static void clean_data(t_ping_data *data)
 {
     if (data && data->target)
         free(data->target);
+    if (data && data->target_addr)
+        free(data->target_addr);
     free(data);
 }
 
@@ -68,6 +70,7 @@ static t_ping_data *check_inputs(int ac, char **av)
         return(NULL);
     data->verbose = 0;
     data->target = NULL;
+    data->target_addr = NULL;
     get_inputs(ac, av, data);
     return(data);
 }
