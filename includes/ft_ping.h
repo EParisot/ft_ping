@@ -41,6 +41,7 @@ typedef struct		s_ping_data
     char            *target;
     char            *target_addr;
     char            sock_addr[16];
+    t_list          *stats_list;
 }					t_ping_data;
 
 typedef struct      s_ping_pkt 
@@ -57,5 +58,8 @@ int             dns_lookup(t_ping_data *data);
 t_ping_pkt      *build_pkt(int msg_count);
 struct msghdr   *build_msg(struct sockaddr *addr_struct);
 void            sig_handler(int numSig);
+void            save_stats(t_ping_data *data, long int *delay);
+void            print_stats(t_ping_data *data);
+void			del(void *addr, size_t size);
 
 # endif

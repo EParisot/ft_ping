@@ -64,3 +64,22 @@ void                sig_handler(int numSig)
         g_keyboard_interrupt = g_keyboard_interrupt + 0x01;
     return;
 }
+
+void                save_stats(t_ping_data *data, long int *delay)
+{
+    t_list          *new_lst;
+
+    if (data->stats_list == NULL)
+        data->stats_list = ft_lstnew(delay, sizeof(int));
+    else
+    {
+        new_lst = ft_lstnew(delay, sizeof(int));
+        ft_lstaddend(&data->stats_list, new_lst);
+    }
+}
+
+void			    del(void *addr, size_t size)
+{
+	(void)size;
+	free(addr);
+}

@@ -23,6 +23,8 @@ static void         clean_data(t_ping_data *data)
         free(data->target);
     if (data && data->target_addr)
         free(data->target_addr);
+    if (data && data->stats_list)
+        ft_lstdel(&data->stats_list, del);
     free(data);
 }
 
