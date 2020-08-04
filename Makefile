@@ -15,6 +15,7 @@ NAME	=	ft_ping
 SRCS	=	srcs/main.c \
 			srcs/ft_ping.c \
 			srcs/ft_ping_tools.c \
+			srcs/ft_ping_tools_2.c \
 
 INC		=	includes/ft_ping.h
 

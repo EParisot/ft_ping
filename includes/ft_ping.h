@@ -31,6 +31,8 @@
 #define TTL_VAL 64
 #define TIMEOUT 1
 
+int     g_keyboard_interrupt;
+
 typedef struct		s_ping_data
 {
     int             verbose;
@@ -47,9 +49,13 @@ typedef struct      s_ping_pkt
     char            msg[PING_PKT_S - sizeof(struct icmphdr)];
 }                   t_ping_pkt;
 
-int ft_ping(t_ping_data *data);
-void set_addr_info_struct(struct addrinfo *hints);
-void free_addr_info(struct addrinfo *result);
-void dns_lookup(t_ping_data *data);
+int             ft_ping(t_ping_data *data);
+unsigned short  calc_checksum(void *msg, int msg_size);
+void            set_addr_info_struct(struct addrinfo *hints);
+void            free_addr_info(struct addrinfo *result);
+int             dns_lookup(t_ping_data *data);
+t_ping_pkt      *build_pkt(int msg_count);
+struct msghdr   *build_msg(struct sockaddr *addr_struct);
+void            sig_handler(int numSig);
 
 # endif

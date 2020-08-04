@@ -12,12 +12,12 @@
 
 #include "../includes/ft_ping.h"
 
-static void print_usage()
+static void         print_usage()
 {
     printf("usage: ping [-v] [target]\n");
 }
 
-static void clean_data(t_ping_data *data)
+static void         clean_data(t_ping_data *data)
 {
     if (data && data->target)
         free(data->target);
@@ -26,9 +26,9 @@ static void clean_data(t_ping_data *data)
     free(data);
 }
 
-static int get_inputs(int ac, char **av, t_ping_data *data)
+static int          get_inputs(int ac, char **av, t_ping_data *data)
 {
-    int         i;
+    int             i;
 
     i = 0;
     while (++i < ac)
@@ -58,7 +58,7 @@ static int get_inputs(int ac, char **av, t_ping_data *data)
 
 static t_ping_data *check_inputs(int ac, char **av)
 {
-    t_ping_data *data;
+    t_ping_data     *data;
 
     data = NULL;
     if (ac <= 1)
@@ -75,10 +75,10 @@ static t_ping_data *check_inputs(int ac, char **av)
     return(data);
 }
 
-int main(int ac, char **av)
+int                 main(int ac, char **av)
 {
-    int         ret;
-    t_ping_data *data;
+    int             ret;
+    t_ping_data     *data;
 
     data = check_inputs(ac, av);
     if (data == NULL || data->target == NULL)
