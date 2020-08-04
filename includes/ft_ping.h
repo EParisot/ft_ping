@@ -24,8 +24,12 @@
 # include <netdb.h>
 # include <netinet/ip_icmp.h>
 # include <sys/time.h>
+# include <signal.h>
 
 #define PING_PKT_S 64
+#define BUFFER_MAX_SIZE 1024
+#define TTL_VAL 64
+#define TIMEOUT 1
 
 typedef struct		s_ping_data
 {
@@ -34,11 +38,12 @@ typedef struct		s_ping_data
     int             ip_version;
     char            *target;
     char            *target_addr;
+    char            sock_addr[16];
 }					t_ping_data;
 
 typedef struct      s_ping_pkt 
 { 
-    struct icmphdr  header; 
+    struct icmphdr  header;
     char            msg[PING_PKT_S - sizeof(struct icmphdr)];
 }                   t_ping_pkt;
 
@@ -46,6 +51,5 @@ int ft_ping(t_ping_data *data);
 void set_addr_info_struct(struct addrinfo *hints);
 void free_addr_info(struct addrinfo *result);
 void dns_lookup(t_ping_data *data);
-
 
 # endif

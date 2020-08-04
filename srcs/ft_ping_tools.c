@@ -17,7 +17,7 @@ void set_addr_info_struct(struct addrinfo *hints)
     ft_memset(hints, 0, sizeof(struct addrinfo));
     hints->ai_family = AF_UNSPEC;    /* Allow IPv4 or IPv6 */
     hints->ai_socktype = SOCK_DGRAM; /* Datagram socket */
-    hints->ai_flags = AI_PASSIVE;    /* For wildcard IP address */
+    hints->ai_flags = AI_PASSIVE | AI_CANONNAME;
     hints->ai_protocol = 0;          /* Any protocol */
     hints->ai_canonname = NULL;
     hints->ai_addr = NULL;
@@ -32,6 +32,7 @@ void free_addr_info(struct addrinfo *result)
     {
         tmp = result;
         result = result->ai_next;
+        free(tmp->ai_canonname);
         free(tmp);
     }
 }
@@ -43,11 +44,10 @@ void dns_lookup(t_ping_data *data)
     struct sockaddr_in  *addr_in;
     struct sockaddr_in6 *addr_in6;
     char                *str_addr;
-    int                 ret;            // !!! pass this as parameter to satisfty normipute
 
     str_addr = NULL;
     set_addr_info_struct(&hints);
-    if ((ret = getaddrinfo(data->target, NULL, &hints, &result)) != 0)
+    if (getaddrinfo(data->target, NULL, &hints, &result) != 0)
         fprintf(stderr, "ft_ping: %s: No address associated with hostname\n", data->target);
     else if (result->ai_addr->sa_family == AF_INET) 
     {
@@ -63,6 +63,7 @@ void dns_lookup(t_ping_data *data)
         inet_ntop(AF_INET6, &(addr_in6->sin6_addr), str_addr, INET6_ADDRSTRLEN);
         data->ip_version = AF_INET6;
     }
+    ft_memcpy(data->sock_addr, result->ai_addr->sa_data, 14);
     free_addr_info(result);
     data->target_addr = str_addr;
 }
