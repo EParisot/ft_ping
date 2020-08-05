@@ -55,8 +55,7 @@ static int      _send_and_receive(t_ping_data *data, \
     delay = (received_size) ? ((end.tv_sec * 1000000 + end.tv_usec) - \
             (start.tv_sec * 1000000 + start.tv_usec)) : 0;
     if (_check_and_wait(msg) == 0 && g_keyboard_interrupt < 10)
-        printf("%d bytes from %s (%s): icmp_seq=%d ttl=%d time=%ld\n", \
-            received_size, data->target, data->target_addr, msg_count, TTL_VAL, delay);
+        print_pkt_stats(data, received_size, msg_count, delay);
     save_stats(data, &delay);
     free(pkt);
     return(0);
@@ -94,6 +93,8 @@ int             exec_ping(t_ping_data *data)
     int             ttl_val;
     struct sockaddr addr_struct;
     struct timeval  tv_out;
+    struct timeval  start;
+    struct timeval  end;
     
     ttl_val = TTL_VAL;
     tv_out.tv_sec = TIMEOUT; 
@@ -102,20 +103,16 @@ int             exec_ping(t_ping_data *data)
     addr_struct.sa_family = data->ip_version;
     ft_memcpy(addr_struct.sa_data, data->sock_addr, 14);
     if (setsockopt(data->sockfd, SOL_IP, IP_TTL, &ttl_val, sizeof(ttl_val)))
-    { 
-        fprintf(stderr, "ft_ping: Setting socket options to TTL failed!\n");
         return(-1);
-    }
     if (setsockopt(data->sockfd, SOL_SOCKET, SO_RCVTIMEO, \
         (const char*)&tv_out, sizeof(tv_out)) != 0)
-    {
-        fprintf(stderr, "ft_ping: Setting socket recv options failed!\n");
         return(-1);
-    }
+    gettimeofday(&start, NULL);
     if (_ping_loop(data, &addr_struct) != 0)
         return(-1);
-    printf("\n--- %s ping statistics ---", data->target);
-    print_stats(data);
+    gettimeofday(&end, NULL);
+    print_stats(data, ((end.tv_sec * 1000000 + end.tv_usec) - \
+            (start.tv_sec * 1000000 + start.tv_usec)) / 1000);
     return(0);
 }
 
@@ -143,7 +140,8 @@ int             ft_ping(t_ping_data *data)
     printf("FT_PING %s (%s) %ld(%ld) bytes of data.\n", \
         data->target, data->target_addr, sizeof(pkt->msg), \
         sizeof(*pkt) + sizeof(struct sockaddr));
-    exec_ping(data);
+    if (exec_ping(data) != 0)
+        fprintf(stderr, "ft_ping: Ping failed!\n");
     close(data->sockfd);
     return(0);
 }
