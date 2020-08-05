@@ -37,15 +37,12 @@ static int			get_inputs(int ac, char **av, t_ping_data *data)
 		if (av[i] && ft_strlen(av[i]))
 		{
 			if (ft_strcmp(av[i], "-h") == 0)
-			{
 				print_usage();
-				return (-1);
-			} 
 			else if (ft_strcmp(av[i], "-v") == 0)
 				data->verbose = 1;
 			else
 			{
-				if ((data->target = (char *)malloc(ft_strlen(av[i]) + 1)) == NULL)
+				if (!(data->target = (char *)malloc(ft_strlen(av[i]) + 1)))
 					return (-1);
 				ft_strcpy(data->target, av[i]);
 			}
