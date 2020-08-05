@@ -58,6 +58,8 @@ unsigned short	calc_checksum(void *msg, int msg_size);
 void			set_addr_info_struct(struct addrinfo *hints);
 void			free_addr_info(struct addrinfo *result);
 int				dns_lookup(t_ping_data *data);
+int				dns_err(t_ping_data *data, int err, struct addrinfo *hints, \
+								struct addrinfo **result);
 t_ping_pkt		*build_pkt(int msg_count);
 struct msghdr	*build_msg(struct sockaddr *addr_struct);
 void			sig_handler(int numSig);

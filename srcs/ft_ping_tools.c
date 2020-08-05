@@ -94,19 +94,8 @@ int					dns_lookup(t_ping_data *data)
 	result = NULL;
 	err = 0;
 	set_addr_info_struct(&hints);
-	if ((err = getaddrinfo(data->target, NULL, &hints, &result)) != 0)
-	{
-		if (err != -5 && err != -2)
-			fprintf(stderr, "ft_ping: %s: Temporary failure in name resolution\n", \
-				data->target);
-		else if (err == -5 && data->verbose)
-			fprintf(stderr, "ft_ping: %s: No address associated with hostname!\n",\
-				data->target);
-		else if (err == -2 && data->verbose)
-			fprintf(stderr, "ft_ping: %s: Name or service not known\n",\
-				data->target);
+	if (dns_err(data, err, &hints, &result) == -1)
 		return (-1);
-	}
 	if (result)
 	{
 		if ((data->target_addr = _dns_lookup(data, result)) == NULL)

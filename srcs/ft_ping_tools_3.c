@@ -54,9 +54,9 @@ float			calc_std(t_list *lst, float mean)
 void			print_pkt_stats(t_ping_data *data, int received_size, \
 								int msg_count, int delay)
 {
-	printf("%d bytes from %s: icmp_seq=%d ttl=%d time=%.2f ms\n", \
-			(int)(received_size - sizeof(struct iphdr)), data->target, \
-			msg_count, data->last_ttl, (float)(delay) / 1000);
+	printf("%d bytes from %s (%s): icmp_seq=%d ttl=%d time=%.2f ms\n", \
+		(int)(received_size - sizeof(struct iphdr)), data->target, \
+		data->target_addr, msg_count, data->last_ttl, (float)(delay) / 1000);
 }
 
 static void		_print_stats_2(t_ping_data *data)
@@ -80,10 +80,12 @@ void			print_stats(t_ping_data *data, int msg_count, int delay)
 							(float)msg_count * 100 : 0;
 	printf("\n--- %s ping statistics ---", data->target);
 	if (data->errors == 0)
-		printf("\n%d packets transmitted, %d received, %.0f%% packet loss, time %dms", \
+		printf("\n%d packets transmitted, %d received, " \
+			"%.0f%% packet loss, time %dms",\
 			msg_count, data->success, prop, delay);
 	else
-		printf("\n%d packets transmitted, %d received, +%d errors, %.0f%% packet loss, time %dms", \
+		printf("\n%d packets transmitted, %d received, " \
+			"+%d errors, %.0f%% packet loss, time %dms",\
 			msg_count, data->success, data->errors, prop, delay);
 	if (data->success > 0)
 		_print_stats_2(data);

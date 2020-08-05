@@ -24,3 +24,22 @@ void		count_success(t_ping_data *data)
 		tmp_lst = tmp_lst->next;
 	}
 }
+
+int			dns_err(t_ping_data *data, int err, struct addrinfo *hints, \
+												struct addrinfo **result)
+{
+	if ((err = getaddrinfo(data->target, NULL, hints, result)) != 0)
+	{
+		if (err != -5 && err != -2)
+			fprintf(stderr, \
+		"ft_ping: %s: Temporary failure in name resolution\n", data->target);
+		else if (err == -5 && data->verbose)
+			fprintf(stderr, \
+		"ft_ping: %s: No address associated with hostname!\n", data->target);
+		else if (err == -2 && data->verbose)
+			fprintf(stderr, "ft_ping: %s: Name or service not known\n",\
+				data->target);
+		return (-1);
+	}
+	return (0);
+}

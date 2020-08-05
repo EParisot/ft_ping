@@ -12,7 +12,8 @@
 
 #include "../includes/ft_ping.h"
 
-static int		_check_and_wait(t_ping_data *data, struct msghdr *msg)
+static int		check_and_wait(t_ping_data *data, struct msghdr *msg, \
+														int msg_count)
 {
 	int			ret;
 	char		*str_addr;
@@ -38,6 +39,12 @@ static int		_check_and_wait(t_ping_data *data, struct msghdr *msg)
 	while (g_keyboard_interrupt << 1 == 0);
 	g_keyboard_interrupt = g_keyboard_interrupt & 0x10;
 	free(str_addr);
+	if (g_keyboard_interrupt < 10 && msg_count % 3 == 0)
+	{
+		printf("From %s icmp_seq=%d Destination Host Unreachable\n", \
+			data->target, msg_count);
+		data->errors += 1;
+	}
 	return (ret);
 }
 
@@ -64,16 +71,10 @@ static int		_send_and_receive(t_ping_data *data, \
 	gettimeofday(&end, NULL);
 	delay = (received_size > -1) ? ((end.tv_sec * 1000000 + end.tv_usec) - \
 			(start.tv_sec * 1000000 + start.tv_usec)) : 0;
-	if (_check_and_wait(data, msg) == 0 && g_keyboard_interrupt < 10)
+	if (check_and_wait(data, msg, msg_count) == 0 && g_keyboard_interrupt < 10)
 	{
 		print_pkt_stats(data, received_size, msg_count, delay);
 		save_stats(data, &delay);
-	}
-	else if (g_keyboard_interrupt < 10 && msg_count % 3 == 0)
-	{
-		printf("From %s icmp_seq=%d Destination Host Unreachable\n", \
-			data->target, msg_count);
-		data->errors += 1;
 	}
 	free(pkt);
 	return (msg_count);
