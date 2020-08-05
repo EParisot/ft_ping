@@ -31,7 +31,7 @@ unsigned short		calc_checksum(void *msg, int msg_size)
 		sum = (sum & 0xffff) + (sum >> 16);
 	sum += (sum >> 16);
 	res = ~sum;
-	return(res);
+	return (res);
 }
 
 void				set_addr_info_struct(struct addrinfo *hints)
@@ -70,7 +70,7 @@ static char			*_dns_lookup(t_ping_data *data, struct addrinfo *result)
 	{
 		addr_in = (struct sockaddr_in *)result->ai_addr;
 		if ((str_addr = (char *)malloc(INET_ADDRSTRLEN)) == NULL)
-			return(NULL);
+			return (NULL);
 		inet_ntop(AF_INET, &(addr_in->sin_addr), str_addr, INET_ADDRSTRLEN);
 		data->ip_version = AF_INET;
 	} 
@@ -78,11 +78,11 @@ static char			*_dns_lookup(t_ping_data *data, struct addrinfo *result)
 	{
 		addr_in6 = (struct sockaddr_in6 *)result->ai_addr;
 		if ((str_addr = (char *)malloc(INET6_ADDRSTRLEN)) == NULL)
-			return(NULL);
+			return (NULL);
 		inet_ntop(AF_INET6, &addr_in6->sin6_addr, str_addr, INET6_ADDRSTRLEN);
 		data->ip_version = AF_INET6;
 	}
-	return(str_addr);
+	return (str_addr);
 }
 
 int					dns_lookup(t_ping_data *data)
@@ -105,17 +105,17 @@ int					dns_lookup(t_ping_data *data)
 		else if (err == -2 && data->verbose)
 			fprintf(stderr, "ft_ping: %s: Name or service not known\n",\
 				data->target);
-		return(-1);
+		return (-1);
 	}
 	if (result)
 	{
 		if ((data->target_addr = _dns_lookup(data, result)) == NULL)
 		{
 			fprintf(stderr, "ft_ping: dns_lookup Malloc failed!\n");
-			return(-1);
+			return (-1);
 		}
 		ft_memcpy(data->sock_addr, result->ai_addr->sa_data, 14);
 	}
 	free_addr_info(result);
-	return(0);
+	return (0);
 }

@@ -48,7 +48,7 @@ float			calc_std(t_list *lst, float mean)
 		lst = lst->next;
 	}
 	std /= size;
-	return(std);
+	return (std);
 }
 
 void			print_pkt_stats(t_ping_data *data, int received_size, \

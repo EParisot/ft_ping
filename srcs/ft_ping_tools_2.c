@@ -19,7 +19,7 @@ t_ping_pkt			*build_pkt(int msg_count)
 
 	i = 0;
 	if ((pkt = (t_ping_pkt *)malloc(sizeof(t_ping_pkt))) == NULL)
-		return(NULL);
+		return (NULL);
 	ft_memset(pkt, 0, sizeof(t_ping_pkt));
 	pkt->header.type = ICMP_ECHO;
 	pkt->header.un.echo.id = getpid();
@@ -29,7 +29,7 @@ t_ping_pkt			*build_pkt(int msg_count)
 	pkt->header.un.echo.sequence = 0;
 	pkt->header.un.echo.sequence = msg_count;
 	pkt->header.checksum = calc_checksum(pkt, sizeof(*pkt));
-	return(pkt);
+	return (pkt);
 }
 
 struct msghdr		*build_msg(struct sockaddr *addr_struct)
@@ -39,11 +39,11 @@ struct msghdr		*build_msg(struct sockaddr *addr_struct)
 	char			*buffer;
 
 	if ((msg = (struct msghdr *)malloc(sizeof(struct msghdr))) == NULL)
-		return(NULL);
+		return (NULL);
 	if ((iov = (struct iovec *)malloc(sizeof(struct iovec))) == NULL)
-		return(NULL);
+		return (NULL);
 	if ((buffer = malloc(BUFFER_MAX_SIZE)) == NULL)
-		return(NULL);
+		return (NULL);
 	ft_memset(msg, 0, sizeof(struct msghdr));
 	ft_memset(iov, 0, sizeof(struct iovec));
 	ft_memset(buffer, 0, BUFFER_MAX_SIZE);
@@ -53,7 +53,7 @@ struct msghdr		*build_msg(struct sockaddr *addr_struct)
 	msg->msg_iovlen = 1;
 	msg->msg_name = addr_struct;
 	msg->msg_namelen = sizeof(struct sockaddr);
-	return(msg);
+	return (msg);
 }
 
 void				sig_handler(int numSig)
@@ -62,7 +62,7 @@ void				sig_handler(int numSig)
 		g_keyboard_interrupt = g_keyboard_interrupt + 0x10;
 	if (numSig == SIGALRM)
 		g_keyboard_interrupt = g_keyboard_interrupt + 0x01;
-	return;
+	return ;
 }
 
 void				save_stats(t_ping_data *data, long int *delay)

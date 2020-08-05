@@ -23,7 +23,7 @@ static int		_check_and_wait(t_ping_data *data, struct msghdr *msg)
 	addr_len = (data->ip_version == AF_INET) ? \
 		INET_ADDRSTRLEN : INET6_ADDRSTRLEN;
 	if ((str_addr = (char *)malloc(addr_len)) == NULL)
-		return(-1);
+		return (-1);
 	inet_ntop(data->ip_version, \
 	&(((struct iphdr *)msg->msg_iov->iov_base)->saddr), str_addr, addr_len);
 	if (ft_strcmp(str_addr, data->target_addr))
@@ -39,7 +39,7 @@ static int		_check_and_wait(t_ping_data *data, struct msghdr *msg)
 	while (g_keyboard_interrupt << 1 == 0);
 	g_keyboard_interrupt = g_keyboard_interrupt & 0x10;
 	free(str_addr);
-	return(ret);
+	return (ret);
 }
 
 static int		_send_and_receive(t_ping_data *data, \
@@ -55,12 +55,12 @@ static int		_send_and_receive(t_ping_data *data, \
 	pkt = NULL;
 	received_size = 0;
 	if ((pkt = build_pkt(msg_count++)) == NULL)
-		return(-1);
+		return (-1);
 	alarm(TIMEOUT);
 	gettimeofday(&start, NULL);
 	if (sendto(data->sockfd, pkt, sizeof(t_ping_pkt), 0, addr_struct, \
 										sizeof(struct sockaddr)) <= 0)
-		return(-1);
+		return (-1);
 	received_size = recvmsg(data->sockfd, msg, 0);
 	gettimeofday(&end, NULL);
 	delay = (received_size > -1) ? ((end.tv_sec * 1000000 + end.tv_usec) - \
@@ -77,7 +77,7 @@ static int		_send_and_receive(t_ping_data *data, \
 		data->errors += 1;
 	}
 	free(pkt);
-	return(msg_count);
+	return (msg_count);
 }
 
 static int		_ping_loop(t_ping_data *data, struct sockaddr *addr_struct)
@@ -96,7 +96,7 @@ static int		_ping_loop(t_ping_data *data, struct sockaddr *addr_struct)
 		if ((msg = build_msg(addr_struct)) == NULL)
 		{
 			fprintf(stderr, "ft_ping: Error building msg!\n");
-			return(-1);
+			return (-1);
 		}
 		if ((msg_count = _send_and_receive(data, msg, addr_struct, 0)) == -1)
 			fprintf(stderr, "ft_ping: Error sending pkt\n");
@@ -104,7 +104,7 @@ static int		_ping_loop(t_ping_data *data, struct sockaddr *addr_struct)
 		free(msg->msg_iov);
 		free(msg);
 	}
-	return(msg_count);
+	return (msg_count);
 }
 
 int				exec_ping(t_ping_data *data, int msg_count)
@@ -122,17 +122,17 @@ int				exec_ping(t_ping_data *data, int msg_count)
 	addr_struct.sa_family = data->ip_version;
 	ft_memcpy(addr_struct.sa_data, data->sock_addr, 14);
 	if (setsockopt(data->sockfd, SOL_IP, IP_TTL, &ttl_val, sizeof(ttl_val)))
-		return(-1);
+		return (-1);
 	if (setsockopt(data->sockfd, SOL_SOCKET, SO_RCVTIMEO, \
 		(const char*)&tv_out, sizeof(tv_out)) != 0)
-		return(-1);
+		return (-1);
 	gettimeofday(&start, NULL);
 	if ((msg_count = _ping_loop(data, &addr_struct)) <= 0)
-		return(-1);
+		return (-1);
 	gettimeofday(&end, NULL);
 	print_stats(data, msg_count - 1, ((end.tv_sec * 1000000 + end.tv_usec) - \
 			(start.tv_sec * 1000000 + start.tv_usec)) / 1000);
-	return(0);
+	return (0);
 }
 
 int				ft_ping(t_ping_data *data)
@@ -143,18 +143,18 @@ int				ft_ping(t_ping_data *data)
 	if ((int)getuid() != 0)
 	{
 		fprintf(stderr, "ft_ping: Insufficient Permissions\n");
-		return(-1);
+		return (-1);
 	}
 	if (dns_lookup(data) != 0)
 	{
 		data->stats_list = NULL;
-		return(-1);
+		return (-1);
 	}
 	if ((data->sockfd = socket((data->ip_version == AF_INET) ? \
 			AF_INET : AF_INET6, SOCK_RAW, IPPROTO_ICMP)) < 0)
 	{
 		fprintf(stderr, "ft_ping: Socket file descriptor not received\n");
-		return(-1);
+		return (-1);
 	}
 	printf("FT_PING %s (%s) %ld(%ld) bytes of data.\n", \
 		data->target, data->target_addr, sizeof(pkt->msg), \
@@ -162,5 +162,5 @@ int				ft_ping(t_ping_data *data)
 	if (exec_ping(data, 0) < 0)
 		fprintf(stderr, "ft_ping: Ping failed!\n");
 	close(data->sockfd);
-	return(0);
+	return (0);
 }
