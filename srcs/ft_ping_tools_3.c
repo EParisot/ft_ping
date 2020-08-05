@@ -56,7 +56,7 @@ void			print_pkt_stats(t_ping_data *data, int received_size, \
 {
 	printf("%d bytes from %s: icmp_seq=%d ttl=%d time=%.2f ms\n", \
 			(int)(received_size - sizeof(struct iphdr)), data->target, \
-			msg_count, TTL_VAL, (float)(delay) / 1000);
+			msg_count, data->last_ttl, (float)(delay) / 1000);
 }
 
 static void		_print_stats_2(t_ping_data *data)

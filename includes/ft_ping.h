@@ -28,7 +28,7 @@
 
 #define PING_PKT_S 64
 #define BUFFER_MAX_SIZE 1024
-#define TTL_VAL 51
+#define TTL_VAL 64
 #define TIMEOUT 1
 
 int		g_keyboard_interrupt;
@@ -42,6 +42,7 @@ typedef struct		s_ping_data
 	char			*target_addr;
 	char			sock_addr[16];
 	t_list			*stats_list;
+	int				last_ttl;
 	int				errors;
 	int				success;
 }					t_ping_data;

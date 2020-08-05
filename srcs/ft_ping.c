@@ -15,7 +15,6 @@
 static int		_check_and_wait(t_ping_data *data, struct msghdr *msg)
 {
 	int			ret;
-	int			pid;
 	char		*str_addr;
 	int			addr_len;
 
@@ -27,11 +26,11 @@ static int		_check_and_wait(t_ping_data *data, struct msghdr *msg)
 	inet_ntop(data->ip_version, \
 	&(((struct iphdr *)msg->msg_iov->iov_base)->saddr), str_addr, addr_len);
 	if (ft_strcmp(str_addr, data->target_addr))
-		ret = -1; 
-	pid = ((struct icmphdr *)(msg->msg_iov->iov_base + \
+		ret = -1;
+	data->last_ttl = ((struct iphdr *)msg->msg_iov->iov_base)->ttl;
+	if (ret == 0 && ((struct icmphdr *)(msg->msg_iov->iov_base + \
 		((struct iphdr *)msg->msg_iov->iov_base)->ihl * \
-		sizeof(unsigned int)))->un.echo.id;
-	if (ret == 0 && pid != getpid() && data->verbose)
+		sizeof(unsigned int)))->un.echo.id != getpid() && data->verbose)
 	{
 			fprintf(stderr, "ft_ping: Someone else packet showed up!\n");
 			ret = -1;
