@@ -1,18 +1,18 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: eparisot <eparisot@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/08/05 23:09:42 by eparisot          #+#    #+#             */
-/*   Updated: 2020/08/05 23:11:02 by eparisot         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+/****************************************************************************/
+/*                                                                          */
+/*                                                       :::      ::::::::  */
+/*  main.c                                             :+:      :+:    :+:  */
+/*                                                   +:+ +:+         +:+    */
+/*  By: eparisot <eparisot@student.42.fr>          +#+  +:+       +#+       */
+/*                                               +#+#+#+#+#+   +#+          */
+/*  Created: 2020/08/05 23:09:42 by eparisot          #+#    #+#            */
+/*  Updated: 2020/08/05 23:11:02 by eparisot         ###   ########.fr      */
+/*                                                                          */
+/****************************************************************************/
 
 #include "../includes/ft_ping.h"
 
-static void			print_usage()
+static void			print_usage(void)
 {
 	printf("usage: ping [-v] [target]\n");
 }
@@ -56,7 +56,7 @@ static int			get_inputs(int ac, char **av, t_ping_data *data)
 		return(-1);
 	}
 	return(0);
-	}
+}
 
 static t_ping_data	*check_inputs(int ac, char **av)
 {
