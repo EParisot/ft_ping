@@ -51,11 +51,12 @@ float           calc_std(t_list *lst, float mean)
     return(std);
 }
 
-void            print_pkt_stats(t_ping_data *data, int received_size, int msg_count, int delay)
+void            print_pkt_stats(t_ping_data *data, int received_size, \
+                                int msg_count, int delay)
 {
     printf("%d bytes from %s: icmp_seq=%d ttl=%d time=%.2f ms\n", \
-            received_size, data->target, msg_count, TTL_VAL, \
-            (float)(delay) / 1000);
+            (int)(received_size - sizeof(struct iphdr)), data->target, \
+            msg_count, TTL_VAL, (float)(delay) / 1000);
 }
 
 static void     _print_stats_2(t_ping_data *data)
@@ -70,32 +71,20 @@ static void     _print_stats_2(t_ping_data *data)
         calc_std(data->stats_list, mean));
 }
 
-void            print_stats(t_ping_data *data, int delay)
+void            print_stats(t_ping_data *data, int msg_count, int delay)
 {
-    t_list      *tmp_lst;
-    int         tot;
-    int         success;
-    int         tot_time;
     float       prop;
 
-    tot_time = 0;
-    tot = 0;
-    success = 0;
-    prop = 0;
-    tmp_lst = data->stats_list;
-    while (tmp_lst->next)
-    {
-        ++tot;
-        if (*(int*)(tmp_lst->content) != 0)
-        {
-            ++success;
-            tot_time += *(int*)tmp_lst->content;
-        }
-        tmp_lst = tmp_lst->next;
-    }
-    prop = (success) ? 100 - (float)success / (float)tot * 100 : 0;
+    count_success(data);
+    prop = (msg_count) ? 100 - (float)data->success / \
+                            (float)msg_count * 100 : 0;
     printf("\n--- %s ping statistics ---", data->target);
-    printf("\n%d packets transmitted, %d received, %.0f%% packet loss, time %dms", \
-        tot, success, prop, delay);
-    _print_stats_2(data);
+    if (data->errors == 0)
+        printf("\n%d packets transmitted, %d received, %.0f%% packet loss, time %dms", \
+            msg_count, data->success, prop, delay);
+    else
+        printf("\n%d packets transmitted, %d received, +%d errors, %.0f%% packet loss, time %dms", \
+            msg_count, data->success, data->errors, prop, delay);
+    if (data->success > 0)
+        _print_stats_2(data);
 }

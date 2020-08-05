@@ -17,6 +17,7 @@ SRCS	=	srcs/main.c \
 			srcs/ft_ping_tools.c \
 			srcs/ft_ping_tools_2.c \
 			srcs/ft_ping_tools_3.c \
+			srcs/ft_ping_tools_4.c \
 
 INC		=	includes/ft_ping.h
 

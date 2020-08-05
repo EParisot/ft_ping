@@ -37,10 +37,10 @@ unsigned short      calc_checksum(void *msg, int msg_size)
 void                set_addr_info_struct(struct addrinfo *hints)
 {
     ft_memset(hints, 0, sizeof(struct addrinfo));
-    hints->ai_family = AF_UNSPEC;    /* Allow IPv4 or IPv6 */
-    hints->ai_socktype = SOCK_DGRAM; /* Datagram socket */
+    hints->ai_family = AF_UNSPEC;
+    hints->ai_socktype = SOCK_DGRAM;
     hints->ai_flags = AI_PASSIVE | AI_CANONNAME;
-    hints->ai_protocol = 0;          /* Any protocol */
+    hints->ai_protocol = 0;
     hints->ai_canonname = NULL;
     hints->ai_addr = NULL;
     hints->ai_next = NULL;
@@ -79,7 +79,7 @@ static char         *_dns_lookup(t_ping_data *data, struct addrinfo *result)
         addr_in6 = (struct sockaddr_in6 *)result->ai_addr;
         if ((str_addr = (char *)malloc(INET6_ADDRSTRLEN)) == NULL)
             return(NULL);
-        inet_ntop(AF_INET6, &(addr_in6->sin6_addr), str_addr, INET6_ADDRSTRLEN);
+        inet_ntop(AF_INET6, &addr_in6->sin6_addr, str_addr, INET6_ADDRSTRLEN);
         data->ip_version = AF_INET6;
     }
     return(str_addr);
@@ -89,19 +89,33 @@ int                 dns_lookup(t_ping_data *data)
 {
     struct addrinfo hints;
     struct addrinfo *result;
+    int             err;
 
+    result = NULL;
+    err = 0;
     set_addr_info_struct(&hints);
-    if (getaddrinfo(data->target, NULL, &hints, &result) != 0)
+    if ((err = getaddrinfo(data->target, NULL, &hints, &result)) != 0)
     {
-        fprintf(stderr, "ft_ping: %s: No address associated with hostname!\n", data->target);
+        if (err != -5 && err != -2)
+            fprintf(stderr, "ft_ping: %s: Temporary failure in name resolution\n", \
+                data->target);
+        else if (err == -5)
+            fprintf(stderr, "ft_ping: %s: No address associated with hostname!\n",\
+                data->target);
+        else if (err == -2)
+            fprintf(stderr, "ft_ping: %s: Name or service not known\n",\
+                data->target);
         return(-1);
     }
-    if ((data->target_addr = _dns_lookup(data, result)) == NULL)
+    if (result)
     {
-        fprintf(stderr, "ft_ping: Malloc failed!\n");
-        return(-1);
+        if ((data->target_addr = _dns_lookup(data, result)) == NULL)
+        {
+            fprintf(stderr, "ft_ping: dns_lookup Malloc failed!\n");
+            return(-1);
+        }
+        ft_memcpy(data->sock_addr, result->ai_addr->sa_data, 14);
     }
-    ft_memcpy(data->sock_addr, result->ai_addr->sa_data, 14);
     free_addr_info(result);
     return(0);
 }
