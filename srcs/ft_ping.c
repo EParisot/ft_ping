@@ -86,8 +86,9 @@ static int		ping_loop(t_ping_data *data, struct sockaddr *addr_struct)
 			fprintf(stderr, "ft_ping: Error building msg!\n");
 			return (-1);
 		}
-		if (send_and_receive(data, msg, addr_struct, 0) == -1)
-			fprintf(stderr, "ft_ping: Error sending pkt\n");
+		int err = 0;
+		if ((err = send_and_receive(data, msg, addr_struct, 0)) == -1)
+			fprintf(stderr, "ft_ping: Error sending pkt %s\n", strerror(err));
 		free(msg->msg_iov->iov_base);
 		free(msg->msg_iov);
 		free(msg);
