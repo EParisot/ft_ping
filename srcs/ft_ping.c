@@ -55,10 +55,11 @@ static int		send_and_receive(t_ping_data *data, struct msghdr *msg, \
 		return (-1);
 	alarm(TIMEOUT);
 	gettimeofday(&start, NULL);
-	if (sendto(data->sockfd, pkt, sizeof(t_ping_pkt), 0, addr_struct, \
-						sizeof(struct sockaddr)) <= 0)
+	int err = 0;
+	if ((err = sendto(data->sockfd, pkt, sizeof(t_ping_pkt), 0, addr_struct, \
+						sizeof(struct sockaddr))) <= 0)
 	{
-		printf("fuck\n");
+		printf("fuck %s\n", strerror(err));
 		return (-1);
 	}
 	received_size = recvmsg(data->sockfd, msg, 0);
