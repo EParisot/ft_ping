@@ -47,6 +47,6 @@ int			dns_err(t_ping_data *data, int err, struct addrinfo *hints, \
 void		ping_err(t_ping_data *data)
 {
 	printf("From %s icmp_seq=%d Destination Host Unreachable\n", \
-			data->target, data->msg_count);
-		data->errors++;
+		data->target, data->msg_count);
+	data->errors++;
 }
