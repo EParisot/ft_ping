@@ -65,6 +65,8 @@ static int		send_and_receive(t_ping_data *data, struct msghdr *msg, \
 		print_pkt_stats(data, received_size, delay);
 	else if (g_keyboard_interrupt < 10 && data->msg_count % 3 == 0)
 		ping_err(data);
+	if (delay / 1000 > TIMEOUT * 1000)
+		fprintf(stderr, "Request timeout for icmp_seq %hu\n", data->msg_count);
 	free(pkt);
 	return (0);
 }
