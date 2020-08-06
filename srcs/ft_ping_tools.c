@@ -59,10 +59,9 @@ void				free_addr_info(struct addrinfo *result)
 	}
 }
 
-static char			*dns_lookup_b(t_ping_data *data, struct addrinfo *result)
+static char			*dns_lookup_b(struct addrinfo *result)
 {
 	struct sockaddr_in	*addr_in;
-	struct sockaddr_in6	*addr_in6;
 	char				*str_addr;
 
 	str_addr = NULL;
@@ -72,15 +71,11 @@ static char			*dns_lookup_b(t_ping_data *data, struct addrinfo *result)
 		if ((str_addr = (char *)malloc(INET_ADDRSTRLEN)) == NULL)
 			return (NULL);
 		inet_ntop(AF_INET, &(addr_in->sin_addr), str_addr, INET_ADDRSTRLEN);
-		data->ipver = AF_INET;
 	}
 	else if (result->ai_addr->sa_family == AF_INET6)
 	{
-		addr_in6 = (struct sockaddr_in6 *)result->ai_addr;
-		if ((str_addr = (char *)malloc(INET6_ADDRSTRLEN)) == NULL)
-			return (NULL);
-		inet_ntop(AF_INET6, &addr_in6->sin6_addr, str_addr, INET6_ADDRSTRLEN);
-		data->ipver = AF_INET6;
+		fprintf(stderr, "IPV6 Not Implemented\n");
+		return (NULL);
 	}
 	return (str_addr);
 }
@@ -98,7 +93,7 @@ int					dns_lookup(t_ping_data *data)
 		return (-1);
 	if (result)
 	{
-		if ((data->target_addr = dns_lookup_b(data, result)) == NULL)
+		if ((data->target_addr = dns_lookup_b(result)) == NULL)
 		{
 			fprintf(stderr, "ft_ping: dns_lookup Malloc failed!\n");
 			return (-1);
