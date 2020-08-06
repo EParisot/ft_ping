@@ -30,13 +30,13 @@ int			dns_err(t_ping_data *data, int err, struct addrinfo *hints, \
 {
 	if ((err = getaddrinfo(data->target, NULL, hints, result)) != 0)
 	{
-		if (err != -5 && err != -2 && data->verbose)
+		if (err != -5 && err != -2)
 			fprintf(stderr, \
 		"ft_ping: %s: Temporary failure in name resolution\n", data->target);
-		else if (err == -5 && data->verbose)
+		else if (err == -5)
 			fprintf(stderr, \
 		"ft_ping: %s: No address associated with hostname!\n", data->target);
-		else if (err == -2 && data->verbose)
+		else if (err == -2)
 			fprintf(stderr, "ft_ping: %s: Name or service not known\n",\
 				data->target);
 		return (-1);
