@@ -113,6 +113,7 @@ int				exec_ping(t_ping_data *data)
 	{
 		printf("fuck\n");
 		return (-1);
+	}
 	if (setsockopt(data->sockfd, SOL_SOCKET, SO_RCVTIMEO, \
 		(const char*)&tv_out, sizeof(tv_out)) != 0)
 		return (-1);
