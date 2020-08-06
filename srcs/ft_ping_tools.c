@@ -74,7 +74,7 @@ static char			*dns_lookup_b(struct addrinfo *result)
 	}
 	else if (result->ai_addr->sa_family == AF_INET6)
 	{
-		fprintf(stderr, "IPV6 Not Implemented\n");
+		fprintf(stderr, "ft_ping: IPV6 Not Implemented\n");
 		return (NULL);
 	}
 	return (str_addr);
