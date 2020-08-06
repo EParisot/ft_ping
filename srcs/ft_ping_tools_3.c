@@ -32,7 +32,7 @@ static float	calc_mean(t_list *lst)
 float			calc_std(t_list *lst, float mean)
 {
 	float			std;
-	int				size; 
+	int				size;
 	float			tmp;
 
 	std = 0;
@@ -57,9 +57,10 @@ void			print_pkt_stats(t_ping_data *data, int received_size, \
 	printf("%d bytes from %s (%s): icmp_seq=%d ttl=%d time=%.2f ms\n", \
 		(int)(received_size - sizeof(struct iphdr)), data->target, \
 		data->target_addr, msg_count, data->last_ttl, (float)(delay) / 1000);
+	save_stats(data, &delay);
 }
 
-static void		_print_stats_2(t_ping_data *data)
+static void		print_stats_2(t_ping_data *data)
 {
 	float mean;
 
@@ -88,5 +89,5 @@ void			print_stats(t_ping_data *data, int msg_count, int delay)
 			"+%d errors, %.0f%% packet loss, time %dms",\
 			msg_count, data->success, data->errors, prop, delay);
 	if (data->success > 0)
-		_print_stats_2(data);
+		print_stats_2(data);
 }

@@ -56,16 +56,16 @@ struct msghdr		*build_msg(struct sockaddr *addr_struct)
 	return (msg);
 }
 
-void				sig_handler(int numSig)
+void				sig_handler(int num_sig)
 {
-	if (numSig == SIGINT)
+	if (num_sig == SIGINT)
 		g_keyboard_interrupt = g_keyboard_interrupt + 0x10;
-	if (numSig == SIGALRM)
+	if (num_sig == SIGALRM)
 		g_keyboard_interrupt = g_keyboard_interrupt + 0x01;
 	return ;
 }
 
-void				save_stats(t_ping_data *data, long int *delay)
+void				save_stats(t_ping_data *data, int *delay)
 {
 	t_list			*new_lst;
 

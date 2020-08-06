@@ -33,10 +33,11 @@ static int		check_and_wait(t_ping_data *data, struct msghdr *msg, \
 		((struct iphdr *)msg->msg_iov->iov_base)->ihl * \
 		sizeof(unsigned int)))->un.echo.id != getpid() && data->verbose)
 	{
-			fprintf(stderr, "ft_ping: Someone else packet showed up!\n");
-			ret = -1;
+		fprintf(stderr, "ft_ping: Someone else packet showed up!\n");
+		ret = -1;
 	}
-	while (g_keyboard_interrupt << 1 == 0);
+	while (g_keyboard_interrupt << 1 == 0)
+		;
 	g_keyboard_interrupt = g_keyboard_interrupt & 0x10;
 	free(str_addr);
 	if (g_keyboard_interrupt < 10 && msg_count % 3 == 0)
@@ -48,9 +49,8 @@ static int		check_and_wait(t_ping_data *data, struct msghdr *msg, \
 	return (ret);
 }
 
-static int		_send_and_receive(t_ping_data *data, \
-				struct msghdr *msg, struct sockaddr *addr_struct, \
-				long int delay)
+static int		send_and_receive(t_ping_data *data, struct msghdr *msg, \
+				struct sockaddr *addr_struct, long int delay)
 {
 	int				received_size;
 	struct timeval	start;
@@ -65,23 +65,20 @@ static int		_send_and_receive(t_ping_data *data, \
 	alarm(TIMEOUT);
 	gettimeofday(&start, NULL);
 	if (sendto(data->sockfd, pkt, sizeof(t_ping_pkt), 0, addr_struct, \
-										sizeof(struct sockaddr)) <= 0)
+						sizeof(struct sockaddr)) <= 0)
 		return (-1);
 	received_size = recvmsg(data->sockfd, msg, 0);
 	gettimeofday(&end, NULL);
 	delay = (received_size > -1) ? ((end.tv_sec * 1000000 + end.tv_usec) - \
 			(start.tv_sec * 1000000 + start.tv_usec)) : 0;
 	if (check_and_wait(data, msg, msg_count) == 0 && g_keyboard_interrupt < 10)
-	{
 		print_pkt_stats(data, received_size, msg_count, delay);
-		save_stats(data, &delay);
-	}
 	free(pkt);
 	return (msg_count);
 }
 
-static int		_ping_loop(t_ping_data *data, struct sockaddr *addr_struct)
-{    
+static int		ping_loop(t_ping_data *data, struct sockaddr *addr_struct)
+{
 	struct msghdr	*msg;
 	int				msg_count;
 
@@ -98,7 +95,7 @@ static int		_ping_loop(t_ping_data *data, struct sockaddr *addr_struct)
 			fprintf(stderr, "ft_ping: Error building msg!\n");
 			return (-1);
 		}
-		if ((msg_count = _send_and_receive(data, msg, addr_struct, 0)) == -1)
+		if ((msg_count = send_and_receive(data, msg, addr_struct, 0)) == -1)
 			fprintf(stderr, "ft_ping: Error sending pkt\n");
 		free(msg->msg_iov->iov_base);
 		free(msg->msg_iov);
@@ -114,9 +111,9 @@ int				exec_ping(t_ping_data *data, int msg_count)
 	struct timeval	tv_out;
 	struct timeval	start;
 	struct timeval	end;
-	
+
 	ttl_val = TTL_VAL;
-	tv_out.tv_sec = TIMEOUT; 
+	tv_out.tv_sec = TIMEOUT;
 	tv_out.tv_usec = 0;
 	ft_memset(&addr_struct, 0, sizeof(struct sockaddr));
 	addr_struct.sa_family = data->ip_version;
@@ -127,7 +124,7 @@ int				exec_ping(t_ping_data *data, int msg_count)
 		(const char*)&tv_out, sizeof(tv_out)) != 0)
 		return (-1);
 	gettimeofday(&start, NULL);
-	if ((msg_count = _ping_loop(data, &addr_struct)) <= 0)
+	if ((msg_count = ping_loop(data, &addr_struct)) <= 0)
 		return (-1);
 	gettimeofday(&end, NULL);
 	print_stats(data, msg_count - 1, ((end.tv_sec * 1000000 + end.tv_usec) - \
@@ -156,11 +153,10 @@ int				ft_ping(t_ping_data *data)
 		fprintf(stderr, "ft_ping: Socket file descriptor not received\n");
 		return (-1);
 	}
-	printf("FT_PING %s (%s) %ld(%ld) bytes of data.\n", \
-		data->target, data->target_addr, sizeof(pkt->msg), \
-		sizeof(*pkt) + sizeof(struct sockaddr) + 4);
-	if (exec_ping(data, 0) < 0)
-		fprintf(stderr, "ft_ping: Ping failed!\n");
+	printf("FT_PING %s (%s) %ld(%ld) bytes of data.\n", data->target, \
+		data->target_addr, sizeof(pkt->msg), sizeof(*pkt) + \
+		sizeof(struct sockaddr) + 4);
+	exec_ping(data, 0);
 	close(data->sockfd);
 	return (0);
 }
