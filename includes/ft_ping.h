@@ -61,6 +61,7 @@ void			free_addr_info(struct addrinfo *result);
 int				dns_lookup(t_ping_data *data);
 int				dns_err(t_ping_data *data, int err, struct addrinfo *hints, \
 								struct addrinfo **result);
+void			ping_err(t_ping_data *data);
 t_ping_pkt		*build_pkt(t_ping_data *data);
 struct msghdr	*build_msg(struct sockaddr *addr_struct);
 void			sig_handler(int numSig);

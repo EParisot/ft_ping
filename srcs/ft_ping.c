@@ -65,11 +65,7 @@ static int		send_and_receive(t_ping_data *data, struct msghdr *msg, \
 	if (check_and_wait(data, msg) == 0 && g_keyboard_interrupt < 10)
 		print_pkt_stats(data, received_size, delay);
 	else if (g_keyboard_interrupt < 10 && data->msg_count % 3 == 0)
-	{
-		printf("From %s icmp_seq=%d Destination Host Unreachable\n", \
-			data->target, data->msg_count);
-		data->errors++;
-	}
+		ping_err(data);
 	free(pkt);
 	return (0);
 }
