@@ -94,10 +94,7 @@ int					dns_lookup(t_ping_data *data)
 	if (result)
 	{
 		if ((data->target_addr = dns_lookup_b(result)) == NULL)
-		{
-			fprintf(stderr, "ft_ping: dns_lookup Malloc failed!\n");
 			return (-1);
-		}
 		ft_memcpy(data->sock_addr, result->ai_addr->sa_data, 14);
 	}
 	free_addr_info(result);
