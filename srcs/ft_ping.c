@@ -52,7 +52,6 @@ static int		send_and_receive(t_ping_data *data, struct msghdr *msg, \
 	received_size = 0;
 	if ((pkt = build_pkt(data)) == NULL)
 		return (-1);
-	alarm(TIMEOUT);
 	gettimeofday(&start, NULL);
 	if (sendto(data->sockfd, pkt, sizeof(t_ping_pkt), 0, addr_struct, \
 						sizeof(struct sockaddr)) <= 0)
@@ -65,7 +64,7 @@ static int		send_and_receive(t_ping_data *data, struct msghdr *msg, \
 		print_pkt_stats(data, received_size, delay);
 	else if (g_keyboard_interrupt < 10 && data->msg_count % 3 == 0)
 		ping_err(data);
-	if (delay / 1000 > TIMEOUT * 1000)
+	if (delay / 1000 > TIMEOUT * 1000 && data->verbose)
 		fprintf(stderr, "Request timeout for icmp_seq %hu\n", data->msg_count);
 	free(pkt);
 	return (0);
@@ -87,6 +86,7 @@ static int		ping_loop(t_ping_data *data, struct sockaddr *addr_struct)
 			fprintf(stderr, "ft_ping: Error building msg!\n");
 			return (-1);
 		}
+		alarm(TIMEOUT);
 		if (send_and_receive(data, msg, addr_struct, 0) == -1)
 			fprintf(stderr, "ft_ping: Error sending pkt\n");
 		free(msg->msg_iov->iov_base);
