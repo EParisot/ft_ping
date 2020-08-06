@@ -57,7 +57,10 @@ static int		send_and_receive(t_ping_data *data, struct msghdr *msg, \
 	gettimeofday(&start, NULL);
 	if (sendto(data->sockfd, pkt, sizeof(t_ping_pkt), 0, addr_struct, \
 						sizeof(struct sockaddr)) <= 0)
+	{
+		printf("fuck\n");
 		return (-1);
+	}
 	received_size = recvmsg(data->sockfd, msg, 0);
 	gettimeofday(&end, NULL);
 	delay = (received_size > -1) ? ((end.tv_sec * 1000000 + end.tv_usec) - \
@@ -86,9 +89,8 @@ static int		ping_loop(t_ping_data *data, struct sockaddr *addr_struct)
 			fprintf(stderr, "ft_ping: Error building msg!\n");
 			return (-1);
 		}
-		int err = 0;
-		if ((err = send_and_receive(data, msg, addr_struct, 0)) == -1)
-			fprintf(stderr, "ft_ping: Error sending pkt %s\n", strerror(err));
+		if (send_and_receive(data, msg, addr_struct, 0) == -1)
+			fprintf(stderr, "ft_ping: Error sending pkt\n");
 		free(msg->msg_iov->iov_base);
 		free(msg->msg_iov);
 		free(msg);
