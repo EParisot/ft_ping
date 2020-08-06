@@ -130,9 +130,9 @@ int				ft_ping(t_ping_data *data)
 	t_ping_pkt	*pkt;
 
 	pkt = NULL;
-	if ((int)getuid() != 0)
+	if ((int)getuid() != 0 && data->verbose)
 	{
-		fprintf(stderr, "ft_ping: Insufficient Permissions\n");
+		fprintf(stderr, "ft_ping: socket: Insufficient Permissions\n");
 		return (-1);
 	}
 	if (dns_lookup(data) != 0)
