@@ -21,8 +21,8 @@ static int		check_and_wait(t_ping_data *data, struct msghdr *msg)
 	ret = 0;
 	if ((str_addr = (char *)malloc(INET_ADDRSTRLEN)) == NULL)
 		return (-1);
-	inet_ntop(AF_INET, &(((struct iphdr *)msg->msg_iov->iov_base)->saddr),\
-	 											str_addr, INET_ADDRSTRLEN);
+	inet_ntop(AF_INET, &(((struct iphdr *)msg->msg_iov->iov_base)->saddr), \
+												str_addr, INET_ADDRSTRLEN);
 	if (ft_strcmp(str_addr, data->target_addr))
 		ret = -1;
 	data->last_ttl = ((struct iphdr *)msg->msg_iov->iov_base)->ttl;
