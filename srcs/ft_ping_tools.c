@@ -72,7 +72,7 @@ static char			*dns_lookup_b(t_ping_data *data, struct addrinfo *result)
 		if ((str_addr = (char *)malloc(INET_ADDRSTRLEN)) == NULL)
 			return (NULL);
 		inet_ntop(AF_INET, &(addr_in->sin_addr), str_addr, INET_ADDRSTRLEN);
-		data->ip_ver = AF_INET;
+		data->ipver = AF_INET;
 	}
 	else if (result->ai_addr->sa_family == AF_INET6)
 	{
@@ -80,7 +80,7 @@ static char			*dns_lookup_b(t_ping_data *data, struct addrinfo *result)
 		if ((str_addr = (char *)malloc(INET6_ADDRSTRLEN)) == NULL)
 			return (NULL);
 		inet_ntop(AF_INET6, &addr_in6->sin6_addr, str_addr, INET6_ADDRSTRLEN);
-		data->ip_ver = AF_INET6;
+		data->ipver = AF_INET6;
 	}
 	return (str_addr);
 }

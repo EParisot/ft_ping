@@ -37,7 +37,7 @@ typedef struct		s_ping_data
 {
 	int				verbose;
 	int				sockfd;
-	int				ip_ver;
+	int				ipver;
 	char			*target;
 	char			*target_addr;
 	char			sock_addr[16];

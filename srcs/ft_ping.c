@@ -19,10 +19,10 @@ static int		check_and_wait(t_ping_data *data, struct msghdr *msg)
 	int			addr_len;
 
 	ret = 0;
-	addr_len = (data->ip_ver == AF_INET) ? INET_ADDRSTRLEN : INET6_ADDRSTRLEN;
+	addr_len = (data->ipver == AF_INET) ? INET_ADDRSTRLEN : INET6_ADDRSTRLEN;
 	if ((str_addr = (char *)malloc(addr_len)) == NULL)
 		return (-1);
-	inet_ntop(data->ip_ver, \
+	inet_ntop(data->ipver, \
 	&(((struct iphdr *)msg->msg_iov->iov_base)->saddr), str_addr, addr_len);
 	if (ft_strcmp(str_addr, data->target_addr))
 		ret = -1;
@@ -107,13 +107,11 @@ int				exec_ping(t_ping_data *data)
 	tv_out.tv_sec = TIMEOUT;
 	tv_out.tv_usec = 0;
 	ft_memset(&addr_struct, 0, sizeof(struct sockaddr));
-	addr_struct.sa_family = data->ip_ver;
+	addr_struct.sa_family = data->ipver;
 	ft_memcpy(addr_struct.sa_data, data->sock_addr, 14);
-	if (setsockopt(data->sockfd, SOL_IP, IP_TTL, &ttl_val, sizeof(ttl_val)))
-	{
-		printf("fuck\n");
+	if (setsockopt(data->sockfd, (data->ipver == AF_INET) ? SOL_IP : SOL_IPV6,\
+			IP_TTL, &ttl_val, sizeof(ttl_val)))
 		return (-1);
-	}
 	if (setsockopt(data->sockfd, SOL_SOCKET, SO_RCVTIMEO, \
 		(const char*)&tv_out, sizeof(tv_out)) != 0)
 		return (-1);
@@ -141,7 +139,7 @@ int				ft_ping(t_ping_data *data)
 		data->stats_list = NULL;
 		return (-1);
 	}
-	if ((data->sockfd = socket((data->ip_ver == AF_INET) ? \
+	if ((data->sockfd = socket((data->ipver == AF_INET) ? \
 			AF_INET : AF_INET6, SOCK_RAW, IPPROTO_ICMP)) < 0)
 	{
 		fprintf(stderr, "ft_ping: Socket file descriptor not received\n");
