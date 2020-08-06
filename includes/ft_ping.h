@@ -37,12 +37,13 @@ typedef struct		s_ping_data
 {
 	int				verbose;
 	int				sockfd;
-	int				ip_version;
+	int				ip_ver;
 	char			*target;
 	char			*target_addr;
 	char			sock_addr[16];
 	t_list			*stats_list;
 	int				last_ttl;
+	int 			msg_count;
 	int				errors;
 	int				success;
 }					t_ping_data;
@@ -60,14 +61,14 @@ void			free_addr_info(struct addrinfo *result);
 int				dns_lookup(t_ping_data *data);
 int				dns_err(t_ping_data *data, int err, struct addrinfo *hints, \
 								struct addrinfo **result);
-t_ping_pkt		*build_pkt(int msg_count);
+t_ping_pkt		*build_pkt(t_ping_data *data);
 struct msghdr	*build_msg(struct sockaddr *addr_struct);
 void			sig_handler(int numSig);
 void			save_stats(t_ping_data *data, int *delay);
 void			count_success(t_ping_data *data);
-void			print_stats(t_ping_data *data, int msg_count, int delay);
+void			print_stats(t_ping_data *data, int delay);
 void			print_pkt_stats(t_ping_data *data, int received_size, \
-								int msg_count, int delay);
+								int delay);
 void			del(void *addr, size_t size);
 
 # endif

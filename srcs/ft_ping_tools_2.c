@@ -12,12 +12,13 @@
 
 #include "../includes/ft_ping.h"
 
-t_ping_pkt			*build_pkt(int msg_count)
+t_ping_pkt			*build_pkt(t_ping_data *data)
 {
 	t_ping_pkt			*pkt;
 	long unsigned int	i;
 
 	i = 0;
+	data->msg_count++;
 	if ((pkt = (t_ping_pkt *)malloc(sizeof(t_ping_pkt))) == NULL)
 		return (NULL);
 	ft_memset(pkt, 0, sizeof(t_ping_pkt));
@@ -27,7 +28,7 @@ t_ping_pkt			*build_pkt(int msg_count)
 		pkt->msg[i++] = 42;
 	pkt->msg[i] = 0;
 	pkt->header.un.echo.sequence = 0;
-	pkt->header.un.echo.sequence = msg_count;
+	pkt->header.un.echo.sequence = data->msg_count;
 	pkt->header.checksum = calc_checksum(pkt, sizeof(*pkt));
 	return (pkt);
 }

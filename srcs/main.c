@@ -72,6 +72,7 @@ static t_ping_data	*check_inputs(int ac, char **av)
 	data->target_addr = NULL;
 	data->errors = 0;
 	data->success = 0;
+	data->msg_count = 0;
 	data->last_ttl = 0;
 	get_inputs(ac, av, data);
 	return (data);

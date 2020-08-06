@@ -52,11 +52,12 @@ float			calc_std(t_list *lst, float mean)
 }
 
 void			print_pkt_stats(t_ping_data *data, int received_size, \
-								int msg_count, int delay)
+								int delay)
 {
 	printf("%d bytes from %s (%s): icmp_seq=%d ttl=%d time=%.2f ms\n", \
 		(int)(received_size - sizeof(struct iphdr)), data->target, \
-		data->target_addr, msg_count, data->last_ttl, (float)(delay) / 1000);
+		data->target_addr, data->msg_count, data->last_ttl, \
+		(float)(delay) / 1000);
 	save_stats(data, &delay);
 }
 
@@ -72,10 +73,12 @@ static void		print_stats_2(t_ping_data *data)
 		calc_std(data->stats_list, mean));
 }
 
-void			print_stats(t_ping_data *data, int msg_count, int delay)
+void			print_stats(t_ping_data *data, int delay)
 {
 	float		prop;
+	int			msg_count;
 
+	msg_count = data->msg_count - 1;
 	count_success(data);
 	prop = (msg_count) ? 100 - (float)data->success / \
 							(float)msg_count * 100 : 0;

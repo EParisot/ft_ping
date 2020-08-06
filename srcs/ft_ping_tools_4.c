@@ -20,7 +20,7 @@ void		count_success(t_ping_data *data)
 	while (tmp_lst)
 	{
 		if (*(int*)(tmp_lst->content) != 0)
-			++data->success;
+			data->success++;
 		tmp_lst = tmp_lst->next;
 	}
 }

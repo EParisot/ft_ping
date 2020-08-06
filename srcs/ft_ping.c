@@ -12,19 +12,17 @@
 
 #include "../includes/ft_ping.h"
 
-static int		check_and_wait(t_ping_data *data, struct msghdr *msg, \
-														int msg_count)
+static int		check_and_wait(t_ping_data *data, struct msghdr *msg)
 {
 	int			ret;
 	char		*str_addr;
 	int			addr_len;
 
 	ret = 0;
-	addr_len = (data->ip_version == AF_INET) ? \
-		INET_ADDRSTRLEN : INET6_ADDRSTRLEN;
+	addr_len = (data->ip_ver == AF_INET) ? INET_ADDRSTRLEN : INET6_ADDRSTRLEN;
 	if ((str_addr = (char *)malloc(addr_len)) == NULL)
 		return (-1);
-	inet_ntop(data->ip_version, \
+	inet_ntop(data->ip_ver, \
 	&(((struct iphdr *)msg->msg_iov->iov_base)->saddr), str_addr, addr_len);
 	if (ft_strcmp(str_addr, data->target_addr))
 		ret = -1;
@@ -40,12 +38,6 @@ static int		check_and_wait(t_ping_data *data, struct msghdr *msg, \
 		;
 	g_keyboard_interrupt = g_keyboard_interrupt & 0x10;
 	free(str_addr);
-	if (g_keyboard_interrupt < 10 && msg_count % 3 == 0)
-	{
-		printf("From %s icmp_seq=%d Destination Host Unreachable\n", \
-			data->target, msg_count);
-		data->errors += 1;
-	}
 	return (ret);
 }
 
@@ -55,12 +47,11 @@ static int		send_and_receive(t_ping_data *data, struct msghdr *msg, \
 	int				received_size;
 	struct timeval	start;
 	struct timeval	end;
-	static int		msg_count;
 	t_ping_pkt		*pkt;
 
 	pkt = NULL;
 	received_size = 0;
-	if ((pkt = build_pkt(msg_count++)) == NULL)
+	if ((pkt = build_pkt(data)) == NULL)
 		return (-1);
 	alarm(TIMEOUT);
 	gettimeofday(&start, NULL);
@@ -71,18 +62,22 @@ static int		send_and_receive(t_ping_data *data, struct msghdr *msg, \
 	gettimeofday(&end, NULL);
 	delay = (received_size > -1) ? ((end.tv_sec * 1000000 + end.tv_usec) - \
 			(start.tv_sec * 1000000 + start.tv_usec)) : 0;
-	if (check_and_wait(data, msg, msg_count) == 0 && g_keyboard_interrupt < 10)
-		print_pkt_stats(data, received_size, msg_count, delay);
+	if (check_and_wait(data, msg) == 0 && g_keyboard_interrupt < 10)
+		print_pkt_stats(data, received_size, delay);
+	else if (g_keyboard_interrupt < 10 && data->msg_count % 3 == 0)
+	{
+		printf("From %s icmp_seq=%d Destination Host Unreachable\n", \
+			data->target, data->msg_count);
+		data->errors++;
+	}
 	free(pkt);
-	return (msg_count);
+	return (0);
 }
 
 static int		ping_loop(t_ping_data *data, struct sockaddr *addr_struct)
 {
 	struct msghdr	*msg;
-	int				msg_count;
 
-	msg_count = 0;
 	msg = NULL;
 	g_keyboard_interrupt = 1;
 	data->stats_list = NULL;
@@ -95,16 +90,16 @@ static int		ping_loop(t_ping_data *data, struct sockaddr *addr_struct)
 			fprintf(stderr, "ft_ping: Error building msg!\n");
 			return (-1);
 		}
-		if ((msg_count = send_and_receive(data, msg, addr_struct, 0)) == -1)
+		if (send_and_receive(data, msg, addr_struct, 0) == -1)
 			fprintf(stderr, "ft_ping: Error sending pkt\n");
 		free(msg->msg_iov->iov_base);
 		free(msg->msg_iov);
 		free(msg);
 	}
-	return (msg_count);
+	return (0);
 }
 
-int				exec_ping(t_ping_data *data, int msg_count)
+int				exec_ping(t_ping_data *data)
 {
 	int				ttl_val;
 	struct sockaddr	addr_struct;
@@ -116,7 +111,7 @@ int				exec_ping(t_ping_data *data, int msg_count)
 	tv_out.tv_sec = TIMEOUT;
 	tv_out.tv_usec = 0;
 	ft_memset(&addr_struct, 0, sizeof(struct sockaddr));
-	addr_struct.sa_family = data->ip_version;
+	addr_struct.sa_family = data->ip_ver;
 	ft_memcpy(addr_struct.sa_data, data->sock_addr, 14);
 	if (setsockopt(data->sockfd, SOL_IP, IP_TTL, &ttl_val, sizeof(ttl_val)))
 		return (-1);
@@ -124,10 +119,10 @@ int				exec_ping(t_ping_data *data, int msg_count)
 		(const char*)&tv_out, sizeof(tv_out)) != 0)
 		return (-1);
 	gettimeofday(&start, NULL);
-	if ((msg_count = ping_loop(data, &addr_struct)) <= 0)
+	if (ping_loop(data, &addr_struct) < 0)
 		return (-1);
 	gettimeofday(&end, NULL);
-	print_stats(data, msg_count - 1, ((end.tv_sec * 1000000 + end.tv_usec) - \
+	print_stats(data, ((end.tv_sec * 1000000 + end.tv_usec) - \
 			(start.tv_sec * 1000000 + start.tv_usec)) / 1000);
 	return (0);
 }
@@ -147,7 +142,7 @@ int				ft_ping(t_ping_data *data)
 		data->stats_list = NULL;
 		return (-1);
 	}
-	if ((data->sockfd = socket((data->ip_version == AF_INET) ? \
+	if ((data->sockfd = socket((data->ip_ver == AF_INET) ? \
 			AF_INET : AF_INET6, SOCK_RAW, IPPROTO_ICMP)) < 0)
 	{
 		fprintf(stderr, "ft_ping: Socket file descriptor not received\n");
@@ -156,7 +151,7 @@ int				ft_ping(t_ping_data *data)
 	printf("FT_PING %s (%s) %ld(%ld) bytes of data.\n", data->target, \
 		data->target_addr, sizeof(pkt->msg), sizeof(*pkt) + \
 		sizeof(struct sockaddr) + 4);
-	exec_ping(data, 0);
+	exec_ping(data);
 	close(data->sockfd);
 	return (0);
 }
