@@ -48,7 +48,7 @@ typedef struct		s_ping_data
 	int				success;
 }					t_ping_data;
 
-typedef struct		s_ping_pkt 
+typedef struct		s_ping_pkt
 {
 	struct icmphdr	header;
 	char			msg[PING_PKT_S - sizeof(struct icmphdr)];
@@ -64,7 +64,7 @@ int					dns_err(t_ping_data *data, int err, \
 void				ping_err(t_ping_data *data);
 t_ping_pkt			*build_pkt(t_ping_data *data);
 struct msghdr		*build_msg(struct sockaddr *addr_struct);
-void				sig_handler(int numSig);
+void				sig_handler(int num_sig);
 void				save_stats(t_ping_data *data, int *delay);
 void				count_success(t_ping_data *data);
 void				print_stats(t_ping_data *data, int delay);
@@ -72,4 +72,4 @@ void				print_pkt_stats(t_ping_data *data, int received_size, \
 									int delay);
 void				del(void *addr, size_t size);
 
-# endif
+#endif
