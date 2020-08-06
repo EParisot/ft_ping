@@ -57,10 +57,7 @@ static int		send_and_receive(t_ping_data *data, struct msghdr *msg, \
 	gettimeofday(&start, NULL);
 	if (sendto(data->sockfd, pkt, sizeof(t_ping_pkt), 0, addr_struct, \
 						sizeof(struct sockaddr)) <= 0)
-	{
-		printf("fuck\n");
 		return (-1);
-	}
 	received_size = recvmsg(data->sockfd, msg, 0);
 	gettimeofday(&end, NULL);
 	delay = (received_size > -1) ? ((end.tv_sec * 1000000 + end.tv_usec) - \
@@ -113,6 +110,8 @@ int				exec_ping(t_ping_data *data)
 	addr_struct.sa_family = data->ip_ver;
 	ft_memcpy(addr_struct.sa_data, data->sock_addr, 14);
 	if (setsockopt(data->sockfd, SOL_IP, IP_TTL, &ttl_val, sizeof(ttl_val)))
+	{
+		printf("fuck\n");
 		return (-1);
 	if (setsockopt(data->sockfd, SOL_SOCKET, SO_RCVTIMEO, \
 		(const char*)&tv_out, sizeof(tv_out)) != 0)
