@@ -30,7 +30,7 @@ int			dns_err(t_ping_data *data, int err, struct addrinfo *hints, \
 {
 	if ((err = getaddrinfo(data->target, NULL, hints, result)) != 0)
 	{
-		if (err != -5 && err != -2)
+		if (err != -5 && err != -2 && data->verbose)
 			fprintf(stderr, \
 		"ft_ping: %s: Temporary failure in name resolution\n", data->target);
 		else if (err == -5 && data->verbose)
