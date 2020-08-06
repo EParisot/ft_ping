@@ -26,12 +26,12 @@
 # include <sys/time.h>
 # include <signal.h>
 
-#define PING_PKT_S 64
-#define BUFFER_MAX_SIZE 1024
-#define TTL_VAL 64
-#define TIMEOUT 1
+# define PING_PKT_S 64
+# define BUFFER_MAX_SIZE 1024
+# define TTL_VAL 64
+# define TIMEOUT 1
 
-int		g_keyboard_interrupt;
+int					g_keyboard_interrupt;
 
 typedef struct		s_ping_data
 {
@@ -43,7 +43,7 @@ typedef struct		s_ping_data
 	char			sock_addr[16];
 	t_list			*stats_list;
 	int				last_ttl;
-	int 			msg_count;
+	int				msg_count;
 	int				errors;
 	int				success;
 }					t_ping_data;
@@ -54,22 +54,22 @@ typedef struct		s_ping_pkt
 	char			msg[PING_PKT_S - sizeof(struct icmphdr)];
 }					t_ping_pkt;
 
-int				ft_ping(t_ping_data *data);
-unsigned short	calc_checksum(void *msg, int msg_size);
-void			set_addr_info_struct(struct addrinfo *hints);
-void			free_addr_info(struct addrinfo *result);
-int				dns_lookup(t_ping_data *data);
-int				dns_err(t_ping_data *data, int err, struct addrinfo *hints, \
-								struct addrinfo **result);
-void			ping_err(t_ping_data *data);
-t_ping_pkt		*build_pkt(t_ping_data *data);
-struct msghdr	*build_msg(struct sockaddr *addr_struct);
-void			sig_handler(int numSig);
-void			save_stats(t_ping_data *data, int *delay);
-void			count_success(t_ping_data *data);
-void			print_stats(t_ping_data *data, int delay);
-void			print_pkt_stats(t_ping_data *data, int received_size, \
-								int delay);
-void			del(void *addr, size_t size);
+int					ft_ping(t_ping_data *data);
+unsigned short		calc_checksum(void *msg, int msg_size);
+void				set_addr_info_struct(struct addrinfo *hints);
+void				free_addr_info(struct addrinfo *result);
+int					dns_lookup(t_ping_data *data);
+int					dns_err(t_ping_data *data, int err, \
+					struct addrinfo *hints, struct addrinfo **result);
+void				ping_err(t_ping_data *data);
+t_ping_pkt			*build_pkt(t_ping_data *data);
+struct msghdr		*build_msg(struct sockaddr *addr_struct);
+void				sig_handler(int numSig);
+void				save_stats(t_ping_data *data, int *delay);
+void				count_success(t_ping_data *data);
+void				print_stats(t_ping_data *data, int delay);
+void				print_pkt_stats(t_ping_data *data, int received_size, \
+									int delay);
+void				del(void *addr, size_t size);
 
 # endif
