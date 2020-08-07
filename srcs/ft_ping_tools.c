@@ -90,8 +90,6 @@ int					dns_lookup(t_ping_data *data)
 	if (dns_err(data, &hints, &result) == -1)
 	{
 		data->stats_list = NULL;
-		if (data->verbose)
-			fprintf(stderr, "ft_ping: Socket file descriptor not received\n");
 		return (-1);
 	}
 	if (result)
