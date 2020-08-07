@@ -137,13 +137,11 @@ int				ft_ping(t_ping_data *data)
 		return (-1);
 	}
 	if (dns_lookup(data) != 0)
-	{
-		data->stats_list = NULL;
 		return (-1);
-	}
 	if ((data->sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP)) < 0)
 	{
-		fprintf(stderr, "ft_ping: Socket file descriptor not received\n");
+		if (data->verbose)
+			fprintf(stderr, "ft_ping: Socket file descriptor not received\n");
 		return (-1);
 	}
 	printf("FT_PING %s (%s) %ld(%ld) bytes of data.\n", data->target, \

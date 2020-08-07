@@ -84,17 +84,23 @@ int					dns_lookup(t_ping_data *data)
 {
 	struct addrinfo hints;
 	struct addrinfo *result;
-	int				err;
 
 	result = NULL;
-	err = 0;
 	set_addr_info_struct(&hints);
-	if (dns_err(data, err, &hints, &result) == -1)
+	if (dns_err(data, &hints, &result) == -1)
+	{
+		data->stats_list = NULL;
+		if (data->verbose)
+			fprintf(stderr, "ft_ping: Socket file descriptor not received\n");
 		return (-1);
+	}
 	if (result)
 	{
 		if ((data->target_addr = dns_lookup_b(result)) == NULL)
+		{
+			data->stats_list = NULL;
 			return (-1);
+		}
 		ft_memcpy(data->sock_addr, result->ai_addr->sa_data, 14);
 	}
 	free_addr_info(result);

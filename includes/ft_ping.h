@@ -59,7 +59,7 @@ unsigned short		calc_checksum(void *msg, int msg_size);
 void				set_addr_info_struct(struct addrinfo *hints);
 void				free_addr_info(struct addrinfo *result);
 int					dns_lookup(t_ping_data *data);
-int					dns_err(t_ping_data *data, int err, \
+int					dns_err(t_ping_data *data, \
 					struct addrinfo *hints, struct addrinfo **result);
 void				ping_err(t_ping_data *data);
 t_ping_pkt			*build_pkt(t_ping_data *data);

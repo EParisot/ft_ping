@@ -25,9 +25,12 @@ void		count_success(t_ping_data *data)
 	}
 }
 
-int			dns_err(t_ping_data *data, int err, struct addrinfo *hints, \
+int			dns_err(t_ping_data *data, struct addrinfo *hints, \
 												struct addrinfo **result)
 {
+	int err;
+
+	err = 0;
 	if ((err = getaddrinfo(data->target, NULL, hints, result)) != 0)
 	{
 		if (err != -5 && err != -2)
