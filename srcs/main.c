@@ -37,7 +37,7 @@ static int			get_inputs(int ac, char **av, t_ping_data *data)
 		if (av[i] && ft_strlen(av[i]))
 		{
 			if (ft_strcmp(av[i], "-h") == 0)
-				print_usage();
+				;
 			else if (ft_strcmp(av[i], "-v") == 0)
 				data->verbose = 1;
 			else
