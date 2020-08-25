@@ -14,10 +14,10 @@ NAME	=	ft_ping
 
 SRCS	=	srcs/main.c \
 			srcs/ft_ping.c \
-			srcs/ft_ping_tools.c \
-			srcs/ft_ping_tools_2.c \
-			srcs/ft_ping_tools_3.c \
-			srcs/ft_ping_tools_4.c \
+			srcs/tools.c \
+			srcs/sock_tools.c \
+			srcs/stat_tools.c \
+			srcs/errors.c \
 
 INC		=	includes/ft_ping.h
 

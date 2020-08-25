@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "../includes/ft_ping.h"
-#include <errno.h>
 
 static int		check_and_wait(t_ping_data *data, struct msghdr *msg)
 {
